@@ -1,5 +1,7 @@
 package sk.lorman.springboot.currencyconversionservice.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 @RestController
 public class CurrencyConversionController {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private Environment environment;
@@ -33,6 +37,8 @@ public class CurrencyConversionController {
 
         CurrencyConversionDTO response = entity.getBody();
 
+        logger.info("{}", response);
+
         return new CurrencyConversionDTO(response.getId(), response.getFrom(), response.getTo(), response.getConversionMultiple(), quantity, quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
 
@@ -40,6 +46,8 @@ public class CurrencyConversionController {
     public CurrencyConversionDTO convertCurrencyFeign(@PathVariable final String from, @PathVariable final String to, @PathVariable final BigDecimal quantity) {
 
         CurrencyConversionDTO response = currencyExchangeServiceProxy.retrieveExchangeValue(from, to);
+
+        logger.info("{}", response);
 
         return new CurrencyConversionDTO(response.getId(), response.getFrom(), response.getTo(), response.getConversionMultiple(), quantity, quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
